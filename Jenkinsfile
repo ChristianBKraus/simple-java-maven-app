@@ -1,11 +1,18 @@
 pipeline {
     agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
+        docker 
     }
     stages {
+    
+        stage('build') { 
+           node('docker&&windows'){ 
+               bat 'echo NodeName = %COMPUTERNAME%' 
+               docker.image('microsoft/windowsservercore:10.0.14393.206').inside { 
+                   bat 'echo %COMPUTERNAME% > container_computername.txt' 
+               } 
+           } 
+        }
+               
         stage('Build') {
             steps {
                 bat 'mvn -B -DskipTests clean package'
